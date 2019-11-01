@@ -8,6 +8,8 @@ import org.openqa.selenium.chrome.ChromeDriver;
 import org.openqa.selenium.support.ui.ExpectedConditions;
 import org.openqa.selenium.support.ui.WebDriverWait;
 
+import java.util.concurrent.TimeUnit;
+
 
 public class MyFirstTest {
     private WebDriver driver;
@@ -16,15 +18,21 @@ public class MyFirstTest {
     @Before
     public void start(){
         driver= new ChromeDriver();
+        // еслине нашел то ждать 10 сек
+        driver.manage().timeouts().implicitlyWait(10, TimeUnit.SECONDS);
         wait= new WebDriverWait(driver, 10);
     }
 
     @Test
     public void myFirstTest(){
         driver.get("http://www.google.com/");
-        WebElement q = driver.findElement(By.name("q"));
-        driver.navigate().refresh();
-        q.sendKeys("webdriver"); // StaleElementReferenceException
+        // кликнем по виртуальной клавиатуре
+        driver.findElement(By.cssSelector("div[aria-label=\"Экранная клавиатура\"]")).click();
+        // на клавиатуре кликнем на пробел
+        driver.findElement(By.id("K32")).click();
+        // закроем виртуальную клавиатуру
+        driver.findElement(By.cssSelector("div[aria-label=\"Экранная клавиатура\"]")).click();
+        driver.findElement(By.name("q")).sendKeys("webdriver"); // StaleElementReferenceException
         driver.findElement(By.name("btnK")).click();
         wait.until(ExpectedConditions.titleIs("webdriver - Поиск в Google"));
     }
