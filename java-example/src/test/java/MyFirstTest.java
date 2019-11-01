@@ -5,7 +5,6 @@ import org.openqa.selenium.By;
 import org.openqa.selenium.HasCapabilities;
 import org.openqa.selenium.WebDriver;
 import org.openqa.selenium.chrome.ChromeDriver;
-import org.openqa.selenium.chrome.ChromeDriverService;
 import org.openqa.selenium.chrome.ChromeOptions;
 import org.openqa.selenium.firefox.FirefoxDriver;
 import org.openqa.selenium.remote.DesiredCapabilities;
@@ -22,12 +21,14 @@ public class MyFirstTest {
     @Before
     public void start(){
         //Capabilities настройки броузера IE
-//        DesiredCapabilities caps = new DesiredCapabilities();
+//        DesiredCapabilities ops = new DesiredCapabilities();
         // для броузера Chrome
-        ChromeOptions caps = new ChromeOptions();
-        caps.setCapability("unexpetedAlertBehaviour", "dicmiss");
+        ChromeOptions ops = new ChromeOptions();
+        ops.setCapability("unexpetedAlertBehaviour", "dicmiss");
+        // добавим параметры командной строки для броузера
+        ops.addArguments("start-fullscreen");
 
-        driver= new ChromeDriver(caps);
+        driver= new ChromeDriver(ops);
 //        driver= new FirefoxDriver();
 
         // вывести инфо о настройках броузера
