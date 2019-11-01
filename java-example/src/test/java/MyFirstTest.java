@@ -19,10 +19,10 @@ public class MyFirstTest {
     private WebDriverWait wait;
 
     // locators
-    static final By virtualKeyboard = By.cssSelector("div[aria-label=\"Экранная клавиатура\"]");
-    static final By inputField = By.name("q");
-    static final By btnOk = By.name("btnK");
-    static final By keySpace = By.id("K32");
+    static final By VIRTUAL_KEYBOARD = By.cssSelector("div[aria-label=\"Экранная клавиатура\"]");
+    static final By INPUT_FIELD = By.name("q");
+    static final By BTN_OK = By.name("btnK");
+    static final By KEY_SPACE = By.id("K32");
 
     @Before
     public void start(){
@@ -47,13 +47,13 @@ public class MyFirstTest {
     public void myFirstTest(){
         driver.get("http://www.google.com/");
         // кликнем по виртуальной клавиатуре
-        driver.findElement(virtualKeyboard).click();
+        driver.findElement(VIRTUAL_KEYBOARD).click();
         // на клавиатуре кликнем на пробел
-        driver.findElement(keySpace).click();
+        driver.findElement(KEY_SPACE).click();
         // закроем виртуальную клавиатуру
-        driver.findElement(virtualKeyboard).click();
-        driver.findElement(inputField).sendKeys("webdriver"); // StaleElementReferenceException
-        driver.findElement(btnOk).click();
+        driver.findElement(VIRTUAL_KEYBOARD).click();
+        driver.findElement(INPUT_FIELD).sendKeys("webdriver"); // StaleElementReferenceException
+        driver.findElement(BTN_OK).click();
         wait.until(ExpectedConditions.titleIs("webdriver - Поиск в Google"));
     }
 
