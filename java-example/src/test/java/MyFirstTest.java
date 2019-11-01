@@ -25,14 +25,14 @@ public class MyFirstTest {
     static final By KEY_SPACE = By.id("K32");
 
     @Before
-    public void start(){
+    public void start() {
         // для броузера Chrome
         ChromeOptions ops = new ChromeOptions();
         ops.setCapability("unexpetedAlertBehaviour", "dicmiss");
         // добавим параметры командной строки для броузера
         ops.addArguments("start-fullscreen");
 
-        driver= new ChromeDriver(ops);
+        driver = new ChromeDriver(ops);
 //        driver= new FirefoxDriver();
 
         // вывести инфо о настройках броузера
@@ -40,11 +40,18 @@ public class MyFirstTest {
 
         // если не нашел то ждать 10 сек
         driver.manage().timeouts().implicitlyWait(10, TimeUnit.SECONDS);
-        wait= new WebDriverWait(driver, 10);
+        wait = new WebDriverWait(driver, 10);
+
+        Runtime.getRuntime().addShutdownHook(
+                new Thread(() -> {
+                    driver.quit();
+                    driver = null;
+                })
+        );
     }
 
     @Test
-    public void myFirstTest(){
+    public void myFirstTest() {
         driver.get("http://www.google.com/");
         // кликнем по виртуальной клавиатуре
         driver.findElement(VIRTUAL_KEYBOARD).click();
@@ -58,8 +65,8 @@ public class MyFirstTest {
     }
 
     @After
-    public void stop(){
-        driver.quit();
-        driver = null;
+    public void stop() {
+//        driver.quit();
+//        driver = null;
     }
 }
