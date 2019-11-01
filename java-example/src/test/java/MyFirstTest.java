@@ -20,8 +20,6 @@ public class MyFirstTest {
 
     @Before
     public void start(){
-        //Capabilities настройки броузера IE
-//        DesiredCapabilities ops = new DesiredCapabilities();
         // для броузера Chrome
         ChromeOptions ops = new ChromeOptions();
         ops.setCapability("unexpetedAlertBehaviour", "dicmiss");
