@@ -15,3 +15,11 @@ dependencies {
     testCompile group: 'junit', name: 'junit', version: '4.12'
     testCompile 'org.seleniumhq.selenium:selenium-java:3.141.59'
 }
+
+test {
+    maxParallelForks = 10
+}
+
+tasks.withType(JavaCompile){
+    options.encoding = 'UTF-8'
+}

@@ -15,8 +15,9 @@ import java.util.concurrent.TimeUnit;
 
 
 public class MyFirstTest {
-    private WebDriver driver;
-    private WebDriverWait wait;
+    public static ThreadLocal<WebDriver> tlDriver = new ThreadLocal<>();
+    public WebDriver driver;
+    public WebDriverWait wait;
 
     // locators
     static final By VIRTUAL_KEYBOARD = By.cssSelector("div[aria-label=\"Экранная клавиатура\"]");
@@ -26,6 +27,11 @@ public class MyFirstTest {
 
     @Before
     public void start() {
+        if (tlDriver.get() != null) {
+            driver = tlDriver.get();
+            wait = new WebDriverWait(driver, 10);
+            return;
+        }
         // для броузера Chrome
         ChromeOptions ops = new ChromeOptions();
         ops.setCapability("unexpetedAlertBehaviour", "dicmiss");
@@ -34,6 +40,7 @@ public class MyFirstTest {
 
         driver = new ChromeDriver(ops);
 //        driver= new FirefoxDriver();
+        tlDriver.set(driver);
 
         // вывести инфо о настройках броузера
         System.out.println(((HasCapabilities) driver).getCapabilities());
