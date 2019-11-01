@@ -2,9 +2,13 @@ import org.junit.After;
 import org.junit.Before;
 import org.junit.Test;
 import org.openqa.selenium.By;
+import org.openqa.selenium.HasCapabilities;
 import org.openqa.selenium.WebDriver;
 import org.openqa.selenium.chrome.ChromeDriver;
+import org.openqa.selenium.chrome.ChromeDriverService;
+import org.openqa.selenium.chrome.ChromeOptions;
 import org.openqa.selenium.firefox.FirefoxDriver;
+import org.openqa.selenium.remote.DesiredCapabilities;
 import org.openqa.selenium.support.ui.ExpectedConditions;
 import org.openqa.selenium.support.ui.WebDriverWait;
 
@@ -17,7 +21,18 @@ public class MyFirstTest {
 
     @Before
     public void start(){
-        driver= new ChromeDriver(); //FirefoxDriver();
+        //Capabilities настройки броузера IE
+//        DesiredCapabilities caps = new DesiredCapabilities();
+        // для броузера Chrome
+        ChromeOptions caps = new ChromeOptions();
+        caps.setCapability("unexpetedAlertBehaviour", "dicmiss");
+
+        driver= new ChromeDriver(caps);
+//        driver= new FirefoxDriver();
+
+        // вывести инфо о настройках броузера
+        System.out.println(((HasCapabilities) driver).getCapabilities());
+
         // если не нашел то ждать 10 сек
         driver.manage().timeouts().implicitlyWait(10, TimeUnit.SECONDS);
         wait= new WebDriverWait(driver, 10);
