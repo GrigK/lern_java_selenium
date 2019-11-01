@@ -18,7 +18,7 @@ public class MyFirstTest {
     @Before
     public void start(){
         driver= new ChromeDriver();
-        // еслине нашел то ждать 10 сек
+        // если не нашел то ждать 10 сек
         driver.manage().timeouts().implicitlyWait(10, TimeUnit.SECONDS);
         wait= new WebDriverWait(driver, 10);
     }
