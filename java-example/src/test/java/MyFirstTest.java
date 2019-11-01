@@ -24,7 +24,7 @@ public class MyFirstTest {
         driver.get("http://www.google.com/");
         WebElement q = driver.findElement(By.name("q"));
         driver.navigate().refresh();
-        q.sendKeys("webdriver");
+        q.sendKeys("webdriver"); // StaleElementReferenceException
         driver.findElement(By.name("btnK")).click();
         wait.until(ExpectedConditions.titleIs("webdriver - Поиск в Google"));
     }
