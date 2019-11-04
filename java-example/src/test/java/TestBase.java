@@ -15,15 +15,16 @@ import java.util.concurrent.TimeUnit;
 public class TestBase {
     public static ThreadLocal<WebDriver> tlDriver = new ThreadLocal<>();
     public WebDriver driver;
-    public WebDriverWait wait;
+    public WebDriverWait wait; // для явных ожиданий
 
     @Before
     public void start() {
         if (tlDriver.get() != null) {
             driver = tlDriver.get();
-            wait = new WebDriverWait(driver, 10);
+            setWait(5);
             return;
         }
+
         ChromeOptions ops = new ChromeOptions();
         ops.setCapability("unexpetedAlertBehaviour", "dicmiss");
         // добавим параметры командной строки для броузера
@@ -32,14 +33,15 @@ public class TestBase {
         driver = new ChromeDriver(ops);
         // driver= new FirefoxDriver();
         // driver = new RemoteWebDriver(DesiredCapabilities.chrome());
+
         tlDriver.set(driver);
 
         // вывести инфо о настройках броузера
         // System.out.println(((HasCapabilities) driver).getCapabilities());
 
         // если не нашел то ждать 10 сек
-        driver.manage().timeouts().implicitlyWait(10, TimeUnit.SECONDS);
-        wait = new WebDriverWait(driver, 10);
+        driver.manage().timeouts().implicitlyWait(5, TimeUnit.SECONDS); // ожидание появления элемента
+        setWait(5);
 
         Runtime.getRuntime().addShutdownHook(
                 new Thread(() -> {
@@ -55,9 +57,13 @@ public class TestBase {
 //        driver = null;
 //    }
 
+    public void setWait(long seconds) {
+        this.wait = new WebDriverWait(driver, seconds);;
+    }
+
     public boolean isElementPresent(By locator){
         try {
-            driver.findElement(locator);
+            wait.until((WebDriver d) -> d.findElement(locator));
             return true;
         } catch (InvalidSelectorException e){
             throw e;
