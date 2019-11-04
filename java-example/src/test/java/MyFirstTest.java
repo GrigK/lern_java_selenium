@@ -83,7 +83,7 @@ public class MyFirstTest extends TestBase {
 
     }
     private void checkSticker(WebElement box){
-        List<WebElement> prods = driver.findElements(HomePage.PRODUCTS);
+        List<WebElement> prods = box.findElements(HomePage.PRODUCTS);
         for(WebElement prod : prods){
             assert prod.findElements(HomePage.STICKER).size() == 1 : "Sticker not one";
         }
