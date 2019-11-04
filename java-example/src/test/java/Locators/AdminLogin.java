@@ -10,5 +10,4 @@ public class AdminLogin {
     public static final By LEFT_MENU_URLS = By.cssSelector("ul#box-apps-menu a");
     public static final By LOGO = By.cssSelector(".logotype");
     public static final By TITLE = By.cssSelector("title");
-
 }
