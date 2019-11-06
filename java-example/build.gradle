@@ -9,11 +9,13 @@ sourceCompatibility = 1.8
 
 repositories {
     mavenCentral()
+    maven { url "https://jitpack.io" }
 }
 
 dependencies {
     testCompile group: 'junit', name: 'junit', version: '4.12'
     testCompile 'org.seleniumhq.selenium:selenium-java:3.141.59'
+    testCompile('com.github.Devskiller:jfairy:master')
 }
 
 test {
