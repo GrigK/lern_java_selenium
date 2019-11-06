@@ -6,6 +6,7 @@ import Locators.First;
 import Locators.AdminLogin;
 import Locators.HomePage;
 import Locators.AdminCountries;
+import Locators.ProductCard;
 
 import java.util.*;
 
@@ -143,6 +144,65 @@ public class MyFirstTest extends TestBase {
         src.addAll(arr);
         Collections.sort(src);
         return src.equals(arr);
+    }
+
+    @Test
+    public void shouldCorrectProductPageOpenFromHome(){
+        /**
+         * 1) Открыть главную страницу
+         * 2) Кликнуть по первому товару в категории Campaigns
+         * 3) Проверить, что открывается страница правильного товара
+         * Более точно, проверить, что
+         *   а) совпадает текст названия товара
+         *   б) совпадает цена (обе цены)
+         * Кроме того, проверить стили цены на главной странице и на странице товара --
+         * первая цена серая, зачёркнутая, маленькая,
+         * вторая цена красная жирная, крупная.
+         */
+        String url = "http://litecart.local/ru/";
+        driver.get(url);
+        assert isElementPresent(HomePage.BOX_CAMPAIGNS) : "Campaign products not found";
+        WebElement campainghs = driver.findElement(HomePage.BOX_CAMPAIGNS);
+
+        Map<String, List<String>> products = new HashMap<>();
+        List<WebElement> productElements = campainghs.findElements(HomePage.PRODUCT_IN_LIST);
+        productElements.forEach((WebElement prd) -> {
+            String link = prd.findElement(HomePage.PRODUCT_LINK).getAttribute("href");
+            List<String> prodAttrs = new ArrayList();
+
+            String nameProduct = prd.findElement(HomePage.NAME_PRODUCT).getText();
+            assert isElementPresent(HomePage.FIRST_PRICE_PRODUCT) : "Not found first price of product " + nameProduct;
+
+            String firstPrice = prd.findElement(HomePage.FIRST_PRICE_PRODUCT).getText();
+            assert isElementPresent(prd, HomePage.FIRST_PRICE_PRODUCT):
+                    "Not found first price for product: " + nameProduct;
+            assert prd.findElement(HomePage.FIRST_PRICE_PRODUCT).getAttribute("class").equals("regular-price") :
+                    "Incorrect css class for first price for product " + nameProduct;
+            String secondPrice = prd.findElement(HomePage.FIRST_PRICE_PRODUCT).getText();
+            assert prd.findElement(HomePage.SECOND_PRICE_PRODUCT).getAttribute("class").equals("campaign-price") :
+                    "Incorrect css class for second price for product " + nameProduct;
+            prodAttrs.add(nameProduct);
+            prodAttrs.add(firstPrice);
+            prodAttrs.add(secondPrice);
+
+            products.put(link, prodAttrs);
+        });
+
+        products.forEach((String link, List<String> attrs) -> {
+            driver.get(link);
+            assert isElementPresent(ProductCard.PRODUCT_TITLE): "Title product card not found";
+            String productTitle = driver.findElement(ProductCard.PRODUCT_TITLE).getText();
+            assert attrs.get(0).equals(productTitle):
+                    "Should be product name: " + attrs.get(0) + " not: " + productTitle;
+            assert isElementPresent(ProductCard.PRODUCT_FIRST_PRICE) :
+                    "Not found first price for: " + productTitle;
+            assert driver.findElement(ProductCard.PRODUCT_FIRST_PRICE)
+                    .getAttribute("class").equals("regular-price") :
+                    "Incorrect css class for first price for product " + productTitle;
+            assert driver.findElement(ProductCard.PRODUCT_SECOND_PRICE)
+                    .getAttribute("class").equals("campaign-price") :
+                    "Incorrect css class for second price for product " + productTitle;
+        });
     }
 
 }
