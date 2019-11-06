@@ -60,7 +60,6 @@ public class MyFirstTest extends TestBase {
         }
     }
 
-
     @Test
     public void checkStickerOnProductsInHomePage() {
         /**
