@@ -1,9 +1,6 @@
 import org.junit.After;
 import org.junit.Before;
-import org.openqa.selenium.By;
-import org.openqa.selenium.InvalidSelectorException;
-import org.openqa.selenium.TimeoutException;
-import org.openqa.selenium.WebDriver;
+import org.openqa.selenium.*;
 import org.openqa.selenium.chrome.ChromeDriver;
 import org.openqa.selenium.chrome.ChromeOptions;
 import org.openqa.selenium.remote.DesiredCapabilities;
@@ -68,6 +65,17 @@ public class TestBase {
     public boolean isElementPresent(By locator){
         try {
             wait.until((WebDriver d) -> d.findElement(locator));
+            return true;
+        } catch (InvalidSelectorException e){
+            throw e;
+        } catch (TimeoutException e){
+            return false;
+        }
+    }
+
+    public boolean isElementPresent(WebElement el, By locator){
+        try {
+            wait.until((WebDriver d) -> el.findElement(locator));
             return true;
         } catch (InvalidSelectorException e){
             throw e;
