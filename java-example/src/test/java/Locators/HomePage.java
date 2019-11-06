@@ -16,4 +16,12 @@ public class HomePage {
     public static final By NAME_PRODUCT = By.cssSelector("div.name");
     public static final By FIRST_PRICE_PRODUCT = By.cssSelector("div.price-wrapper s"); //.regular-price
     public static final By SECOND_PRICE_PRODUCT = By.cssSelector("div.price-wrapper strong"); //.campaign-price
+
+    public static final By LOGIN_EMAIL = By.cssSelector("form[name=login_form] input[name=email]");
+    public static final By LOGIN_PASSWORD = By.cssSelector("form[name=login_form] input[type=password]");
+    public static final By LOGIN_BTN_ENTER = By.cssSelector("button[name=login]");
+
+    public static final By USER_ACCOUNT_BOX = By.cssSelector("#box-account");
+    public static final String USER_LOGOUT_URL = "http://litecart.local/ru/logout";
+
 }

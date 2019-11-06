@@ -12,6 +12,7 @@ import Locators.AdminLogin;
 import Locators.HomePage;
 import Locators.AdminCountries;
 import Locators.ProductCard;
+import Locators.RegisterForm;
 
 public class MyFirstTest extends TestBase {
     @Test
@@ -38,8 +39,22 @@ public class MyFirstTest extends TestBase {
          * 2) прокликивает последовательно все пункты меню слева, включая вложенные пункты
          * 3) для каждой страницы проверяет наличие заголовка
          */
+        EnterToAdminSide();
+
+        List<WebElement> elems = driver.findElements(AdminLogin.LEFT_MENU_URLS);
+        List<String> urls = new ArrayList();
+        elems.forEach((WebElement el) -> { urls.add(el.getAttribute("href")); });
+
+        for (String page : urls) {
+            driver.get(page);
+            assert isElementPresent(AdminLogin.TITLE) : "Title not found";
+            assert !driver .getTitle().equals("") : "Title is empty " + page;
+        }
+    }
+
+    private void EnterToAdminSide(){
         setWait(5);
-        String url = "http://litecart.local/admin/login.php?redirect_url=%2Fadmin%2F";
+        String url = "http://litecart.local/admin/";
         driver.get(url);
         assert isElementPresent(AdminLogin.USERNAME) : "Input username field not found";
         assert isElementPresent(AdminLogin.PASSWORD) : "Input password field not found";
@@ -47,19 +62,7 @@ public class MyFirstTest extends TestBase {
         driver.findElement(AdminLogin.USERNAME).sendKeys("admin");
         driver.findElement(AdminLogin.PASSWORD).sendKeys("ujuf0311");
         driver.findElement(AdminLogin.BTN_LOGIN).click();
-        assert expectTitlePage("My Lite Store") : "Could not login to admin panel";
-
-        List<WebElement> elems = driver.findElements(AdminLogin.LEFT_MENU_URLS);
-        List<String> urls = new ArrayList();
-        for (WebElement uri : elems) {
-            urls.add(uri.getAttribute("href"));
-        }
-
-        for (String page : urls) {
-            driver.get(page);
-            assert isElementPresent(AdminLogin.TITLE) : "Title not found";
-            assert !driver .getTitle().equals("") : "Title is empty " + page;
-        }
+        assert isElementPresent(AdminLogin.LOGO): "No logo found after login in admin page";
     }
 
     @Test
@@ -98,15 +101,9 @@ public class MyFirstTest extends TestBase {
          * 2) на странице http://localhost/litecart/admin/?app=geo_zones&doc=geo_zones
          * зайти в каждую из стран и проверить, что зоны расположены в алфавитном порядке
          */
-        setWait(5);
         String url = "http://litecart.local/admin/?app=countries&doc=countries";
+        EnterToAdminSide();
         driver.get(url);
-        assert isElementPresent(AdminLogin.USERNAME) : "Input username field not found";
-        assert isElementPresent(AdminLogin.PASSWORD) : "Input password field not found";
-        assert isElementPresent(AdminLogin.BTN_LOGIN) : "Button login not found";
-        driver.findElement(AdminLogin.USERNAME).sendKeys("admin");
-        driver.findElement(AdminLogin.PASSWORD).sendKeys("ujuf0311");
-        driver.findElement(AdminLogin.BTN_LOGIN).click();
 
         assert isElementPresent(AdminCountries.TABLE_ALL_COUNTRIES);
         WebElement tableCounties = driver.findElement(AdminCountries.TABLE_ALL_COUNTRIES);
@@ -216,24 +213,54 @@ public class MyFirstTest extends TestBase {
          * 3) повторный вход в только что созданную учётную запись,
          * 4) и ещё раз выход.
          */
+        String urlRegister = "http://litecart.local/ru/create_account";
 
         Fairy fairy = Fairy.create();
         Person person = fairy.person();
 
-        System.out.println(person.getFullName());
-        // Chloe Barker
-        System.out.println(person.getEmail());
-        // barker@yahoo.com
-        System.out.println(person.getTelephoneNumber());
-        // 690-950-802
+        driver.get(urlRegister);
+        assert isElementPresent(RegisterForm.FIRST_NAME): "Field 'first name' not found on register page";
+        assert isElementPresent(RegisterForm.LAST_NAME): "Field 'last name' not found on register page";
+        assert isElementPresent(RegisterForm.ADDR_1): "Field 'Address 1' not found on register page";
+        assert isElementPresent(RegisterForm.ADDR_2): "Field 'Address 2' not found on register page";
+        assert isElementPresent(RegisterForm.POST_CODE): "Field 'post' not found on register page";
+        assert isElementPresent(RegisterForm.CITY): "Field 'city' not found on register page";
+        assert isElementPresent(RegisterForm.COUNTRY_LIST): "Field 'Country' not found on register page";
+        assert isElementPresent(RegisterForm.EMAIL): "Field 'email' not found on register page";
+        assert isElementPresent(RegisterForm.PHONE): "Field 'phone' not found on register page";
+        assert isElementPresent(RegisterForm.SUBSCRIBE_CHECK): "Field 'Subscribe' not found on register page";
+        assert isElementPresent(RegisterForm.PASSWORD): "Field 'password' not found on register page";
+        assert isElementPresent(RegisterForm.CONFIRMED_PASSWORD): "Field 'confirm password' not found on register page";
+        assert isElementPresent(RegisterForm.BTN_CREATE_ACCOUNT): "Button 'Create account' not found on register page";
 
-        Person adultMale = fairy.person(PersonProperties.male(), PersonProperties.minAge(21));
-        System.out.println(adultMale.isMale());
-        // true
-        System.out.println(adultMale.getDateOfBirth());
+        driver.findElement(RegisterForm.FIRST_NAME).sendKeys(person.getFirstName());
+        driver.findElement(RegisterForm.LAST_NAME).sendKeys(person.getLastName());
+        driver.findElement(RegisterForm.ADDR_1).sendKeys(person.getAddress().getAddressLine1());
+        driver.findElement(RegisterForm.ADDR_2).sendKeys(person.getAddress().getAddressLine2());
+        driver.findElement(RegisterForm.POST_CODE).sendKeys("123456");
+        driver.findElement(RegisterForm.CITY).sendKeys("TestCity");
+        driver.findElement(RegisterForm.EMAIL).sendKeys(person.getEmail());
+        driver.findElement(RegisterForm.PHONE).sendKeys(person.getTelephoneNumber());
+        driver.findElement(RegisterForm.SUBSCRIBE_CHECK).click();
+        driver.findElement(RegisterForm.PASSWORD).sendKeys(person.getPassword());
+        driver.findElement(RegisterForm.CONFIRMED_PASSWORD).sendKeys(person.getPassword());
+        driver.findElement(RegisterForm.BTN_CREATE_ACCOUNT).click();
 
-        String url = "http://litecart.local/ru/";
-        driver.get(url);
-        assert isElementPresent(HomePage.FIRST_PRICE_PRODUCT) : "Not found first price of product ";
+        setWait(5);
+        assert isElementPresent(HomePage.USER_ACCOUNT_BOX) : "Register new customer FAIL!";
+        driver.get(HomePage.USER_LOGOUT_URL);
+        assert !isElementPresent(HomePage.USER_ACCOUNT_BOX) : "Logout FAIL!";
+
+        assert isElementPresent(HomePage.LOGIN_EMAIL): "Field 'email' not found on home page";
+        assert isElementPresent(HomePage.LOGIN_PASSWORD): "Field 'password' not found on home page";
+        assert isElementPresent(HomePage.LOGIN_BTN_ENTER): "Button 'login' not found on home page";
+        driver.findElement(HomePage.LOGIN_EMAIL).sendKeys(person.getEmail());
+        driver.findElement(HomePage.LOGIN_PASSWORD).sendKeys(person.getPassword());
+        driver.findElement(HomePage.LOGIN_BTN_ENTER).click();
+
+        assert isElementPresent(HomePage.USER_ACCOUNT_BOX) : "Login customer FAIL!";
+        driver.get(HomePage.USER_LOGOUT_URL);
+        assert !isElementPresent(HomePage.USER_ACCOUNT_BOX) : "Logout customer FAIL!";
     }
+
 }
