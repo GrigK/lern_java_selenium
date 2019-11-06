@@ -1,3 +1,8 @@
+import com.devskiller.jfairy.Fairy;
+import com.devskiller.jfairy.producer.person.Person;
+import com.devskiller.jfairy.producer.person.PersonProperties;
+
+import java.util.*;
 import org.junit.Test;
 import org.openqa.selenium.WebElement;
 import org.openqa.selenium.support.ui.ExpectedConditions;
@@ -7,9 +12,6 @@ import Locators.AdminLogin;
 import Locators.HomePage;
 import Locators.AdminCountries;
 import Locators.ProductCard;
-
-import java.util.*;
-
 
 public class MyFirstTest extends TestBase {
     @Test
@@ -36,6 +38,7 @@ public class MyFirstTest extends TestBase {
          * 2) прокликивает последовательно все пункты меню слева, включая вложенные пункты
          * 3) для каждой страницы проверяет наличие заголовка
          */
+        setWait(5);
         String url = "http://litecart.local/admin/login.php?redirect_url=%2Fadmin%2F";
         driver.get(url);
         assert isElementPresent(AdminLogin.USERNAME) : "Input username field not found";
@@ -53,10 +56,9 @@ public class MyFirstTest extends TestBase {
         }
 
         for (String page : urls) {
-            System.out.println(page);
             driver.get(page);
             assert isElementPresent(AdminLogin.TITLE) : "Title not found";
-            assert driver.findElement(AdminLogin.TITLE).getText() != "" : "Title is empty";
+            assert !driver .getTitle().equals("") : "Title is empty " + page;
         }
     }
 
@@ -96,6 +98,7 @@ public class MyFirstTest extends TestBase {
          * 2) на странице http://localhost/litecart/admin/?app=geo_zones&doc=geo_zones
          * зайти в каждую из стран и проверить, что зоны расположены в алфавитном порядке
          */
+        setWait(5);
         String url = "http://litecart.local/admin/?app=countries&doc=countries";
         driver.get(url);
         assert isElementPresent(AdminLogin.USERNAME) : "Input username field not found";
@@ -204,4 +207,33 @@ public class MyFirstTest extends TestBase {
         });
     }
 
+    @Test
+    public void regNewUserInMarket(){
+        /**
+         * 1) регистрация новой учётной записи с достаточно уникальным адресом электронной
+         * почты (чтобы не конфликтовало с ранее созданными пользователями),
+         * 2) выход (logout), потому что после успешной регистрации автоматически происходит вход,
+         * 3) повторный вход в только что созданную учётную запись,
+         * 4) и ещё раз выход.
+         */
+
+        Fairy fairy = Fairy.create();
+        Person person = fairy.person();
+
+        System.out.println(person.getFullName());
+        // Chloe Barker
+        System.out.println(person.getEmail());
+        // barker@yahoo.com
+        System.out.println(person.getTelephoneNumber());
+        // 690-950-802
+
+        Person adultMale = fairy.person(PersonProperties.male(), PersonProperties.minAge(21));
+        System.out.println(adultMale.isMale());
+        // true
+        System.out.println(adultMale.getDateOfBirth());
+
+        String url = "http://litecart.local/ru/";
+        driver.get(url);
+        assert isElementPresent(HomePage.FIRST_PRICE_PRODUCT) : "Not found first price of product ";
+    }
 }
