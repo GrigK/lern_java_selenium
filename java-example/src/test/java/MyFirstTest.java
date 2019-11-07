@@ -1,15 +1,13 @@
 import com.devskiller.jfairy.Fairy;
 import com.devskiller.jfairy.producer.person.Person;
-import com.devskiller.jfairy.producer.person.PersonProperties;
 
 import java.util.*;
 import org.junit.Test;
 import org.openqa.selenium.WebElement;
-import org.openqa.selenium.support.ui.ExpectedConditions;
 
 import Locators.First;
 import Locators.AdminLogin;
-import Locators.HomePage;
+import Locators.Home;
 import Locators.AdminCountries;
 import Locators.ProductCard;
 import Locators.RegisterForm;
@@ -50,12 +48,14 @@ public class MyFirstTest extends TestBase {
             assert isElementPresent(AdminLogin.TITLE) : "Title not found";
             assert !driver .getTitle().equals("") : "Title is empty " + page;
         }
+        driver.findElement(AdminLogin.LOGOUT_ICON).click(); // выход
     }
 
     private void EnterToAdminSide(){
         setWait(5);
         String url = "http://litecart.local/admin/";
         driver.get(url);
+        assert driver.findElements(AdminLogin.BOX_LOGIN).size() > 0 : "Wrong login page";
         assert isElementPresent(AdminLogin.USERNAME) : "Input username field not found";
         assert isElementPresent(AdminLogin.PASSWORD) : "Input password field not found";
         assert isElementPresent(AdminLogin.BTN_LOGIN) : "Button login not found";
@@ -75,20 +75,20 @@ public class MyFirstTest extends TestBase {
          */
         String url = "http://litecart.local/";
         driver.get(url);
-        assert isElementPresent(HomePage.TITLE) : "Title not found";
-        assert isElementPresent(HomePage.BOX_MOST_POPULAR) : "Popular products not found";
-        checkSticker(driver.findElement(HomePage.BOX_MOST_POPULAR));
-        assert isElementPresent(HomePage.BOX_CAMPAIGNS) : "Campaign products not found";
-        checkSticker(driver.findElement(HomePage.BOX_CAMPAIGNS));
-        assert isElementPresent(HomePage.BOX_LATEST_PRODUCTS) : "Latest products not found";
-        checkSticker(driver.findElement(HomePage.BOX_LATEST_PRODUCTS));
+        assert isElementPresent(Home.TITLE) : "Title not found";
+        assert isElementPresent(Home.BOX_MOST_POPULAR) : "Popular products not found";
+        checkSticker(driver.findElement(Home.BOX_MOST_POPULAR));
+        assert isElementPresent(Home.BOX_CAMPAIGNS) : "Campaign products not found";
+        checkSticker(driver.findElement(Home.BOX_CAMPAIGNS));
+        assert isElementPresent(Home.BOX_LATEST_PRODUCTS) : "Latest products not found";
+        checkSticker(driver.findElement(Home.BOX_LATEST_PRODUCTS));
 
     }
 
     private void checkSticker(WebElement box) {
-        List<WebElement> prods = box.findElements(HomePage.PRODUCTS);
+        List<WebElement> prods = box.findElements(Home.PRODUCTS);
         for (WebElement prod : prods) {
-            assert prod.findElements(HomePage.STICKER).size() == 1 : "Sticker not one";
+            assert prod.findElements(Home.STICKER).size() == 1 : "Sticker not one";
         }
     }
 
@@ -133,6 +133,7 @@ public class MyFirstTest extends TestBase {
                 subCountrieNames.add(y.findElement(AdminCountries.COUNTRY_NAME_SUBZONE).getText());});
             assert checkSortingList(subCountrieNames): "The error of sorting the list of subzones";
         }
+        driver.findElement(AdminLogin.LOGOUT_ICON).click(); // выход
     }
 
     private boolean checkSortingList(List<String> arr){
@@ -160,25 +161,25 @@ public class MyFirstTest extends TestBase {
          */
         String url = "http://litecart.local/ru/";
         driver.get(url);
-        assert isElementPresent(HomePage.BOX_CAMPAIGNS) : "Campaign products not found";
-        WebElement campainghs = driver.findElement(HomePage.BOX_CAMPAIGNS);
+        assert isElementPresent(Home.BOX_CAMPAIGNS) : "Campaign products not found";
+        WebElement campainghs = driver.findElement(Home.BOX_CAMPAIGNS);
 
         Map<String, List<String>> products = new HashMap<>();
-        List<WebElement> productElements = campainghs.findElements(HomePage.PRODUCT_IN_LIST);
+        List<WebElement> productElements = campainghs.findElements(Home.PRODUCT_IN_LIST);
         productElements.forEach((WebElement prd) -> {
-            String link = prd.findElement(HomePage.PRODUCT_LINK).getAttribute("href");
+            String link = prd.findElement(Home.PRODUCT_LINK).getAttribute("href");
             List<String> prodAttrs = new ArrayList();
 
-            String nameProduct = prd.findElement(HomePage.NAME_PRODUCT).getText();
-            assert isElementPresent(HomePage.FIRST_PRICE_PRODUCT) : "Not found first price of product " + nameProduct;
+            String nameProduct = prd.findElement(Home.NAME_PRODUCT).getText();
+            assert isElementPresent(Home.FIRST_PRICE_PRODUCT) : "Not found first price of product " + nameProduct;
 
-            String firstPrice = prd.findElement(HomePage.FIRST_PRICE_PRODUCT).getText();
-            assert isElementPresent(prd, HomePage.FIRST_PRICE_PRODUCT):
+            String firstPrice = prd.findElement(Home.FIRST_PRICE_PRODUCT).getText();
+            assert isElementPresent(prd, Home.FIRST_PRICE_PRODUCT):
                     "Not found first price for product: " + nameProduct;
-            assert prd.findElement(HomePage.FIRST_PRICE_PRODUCT).getAttribute("class").equals("regular-price") :
+            assert prd.findElement(Home.FIRST_PRICE_PRODUCT).getAttribute("class").equals("regular-price") :
                     "Incorrect css class for first price for product " + nameProduct;
-            String secondPrice = prd.findElement(HomePage.FIRST_PRICE_PRODUCT).getText();
-            assert prd.findElement(HomePage.SECOND_PRICE_PRODUCT).getAttribute("class").equals("campaign-price") :
+            String secondPrice = prd.findElement(Home.FIRST_PRICE_PRODUCT).getText();
+            assert prd.findElement(Home.SECOND_PRICE_PRODUCT).getAttribute("class").equals("campaign-price") :
                     "Incorrect css class for second price for product " + nameProduct;
             prodAttrs.add(nameProduct);
             prodAttrs.add(firstPrice);
@@ -247,20 +248,20 @@ public class MyFirstTest extends TestBase {
         driver.findElement(RegisterForm.BTN_CREATE_ACCOUNT).click();
 
         setWait(5);
-        assert isElementPresent(HomePage.USER_ACCOUNT_BOX) : "Register new customer FAIL!";
-        driver.get(HomePage.USER_LOGOUT_URL);
-        assert !isElementPresent(HomePage.USER_ACCOUNT_BOX) : "Logout FAIL!";
+        assert isElementPresent(Home.USER_ACCOUNT_BOX) : "Register new customer FAIL!";
+        driver.get(Home.USER_LOGOUT_URL);
+        assert !isElementPresent(Home.USER_ACCOUNT_BOX) : "Logout FAIL!";
 
-        assert isElementPresent(HomePage.LOGIN_EMAIL): "Field 'email' not found on home page";
-        assert isElementPresent(HomePage.LOGIN_PASSWORD): "Field 'password' not found on home page";
-        assert isElementPresent(HomePage.LOGIN_BTN_ENTER): "Button 'login' not found on home page";
-        driver.findElement(HomePage.LOGIN_EMAIL).sendKeys(person.getEmail());
-        driver.findElement(HomePage.LOGIN_PASSWORD).sendKeys(person.getPassword());
-        driver.findElement(HomePage.LOGIN_BTN_ENTER).click();
+        assert isElementPresent(Home.LOGIN_EMAIL): "Field 'email' not found on home page";
+        assert isElementPresent(Home.LOGIN_PASSWORD): "Field 'password' not found on home page";
+        assert isElementPresent(Home.LOGIN_BTN_ENTER): "Button 'login' not found on home page";
+        driver.findElement(Home.LOGIN_EMAIL).sendKeys(person.getEmail());
+        driver.findElement(Home.LOGIN_PASSWORD).sendKeys(person.getPassword());
+        driver.findElement(Home.LOGIN_BTN_ENTER).click();
 
-        assert isElementPresent(HomePage.USER_ACCOUNT_BOX) : "Login customer FAIL!";
-        driver.get(HomePage.USER_LOGOUT_URL);
-        assert !isElementPresent(HomePage.USER_ACCOUNT_BOX) : "Logout customer FAIL!";
+        assert isElementPresent(Home.USER_ACCOUNT_BOX) : "Login customer FAIL!";
+        driver.get(Home.USER_LOGOUT_URL);
+        assert !isElementPresent(Home.USER_ACCOUNT_BOX) : "Logout customer FAIL!";
     }
 
 }
