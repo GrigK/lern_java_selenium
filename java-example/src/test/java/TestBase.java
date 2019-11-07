@@ -64,7 +64,8 @@ public class TestBase {
 
     public boolean isElementPresent(By locator){
         try {
-            wait.until((WebDriver d) -> d.findElement(locator));
+            wait.until((WebDriver d) -> ExpectedConditions.visibilityOf(d.findElement(locator)));
+//            wait.until((WebDriver d) -> d.findElement(locator));
             return true;
         } catch (InvalidSelectorException e){
             throw e;
