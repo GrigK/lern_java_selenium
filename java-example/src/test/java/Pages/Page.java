@@ -92,4 +92,14 @@ public class Page {
         return driver.findElements(locator).size() > 0;
     }
 
+    public void clickElement(By locator){
+        assert isElementPresent(locator) : locator.toString() + " not found on page " + driver.getCurrentUrl();
+        driver.findElement(locator).click();
+    }
+
+    public void sendStringElement(By locator, String str){
+        assert isElementPresent(locator) : locator.toString() + " not found on page " + driver.getCurrentUrl();
+        driver.findElement(locator).sendKeys(str);
+    }
+
 }

@@ -103,4 +103,5 @@ public class TestBase {
     public boolean expectTitlePage(String title){
         return wait.until(ExpectedConditions.titleIs(title));
     }
+
 }

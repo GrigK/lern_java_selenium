@@ -51,8 +51,8 @@ public class AdminPanelLoginPage extends Page {
     }
 
     public void submitLogin() {
-        assert isElementPresent(AdminLogin.BTN_LOGIN) : "Button login on login page not found";
+        assert isElementPresent(AdminLogin.BTN_LOGIN) : "Button 'login' on 'login page' not found";
         driver.findElement(AdminLogin.BTN_LOGIN).click();
-        assert isElementPresent(AdminLogin.LEFT_MENU) : "Login to admin panel fail";
+        assert isElementPresent(AdminLogin.LEFT_MENU) : "Log in to admin panel fail";
     }
 }

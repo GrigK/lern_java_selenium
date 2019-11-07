@@ -1,3 +1,4 @@
+import Pages.AdminPanelLoginPage;
 import com.devskiller.jfairy.Fairy;
 import com.devskiller.jfairy.producer.person.Person;
 
@@ -13,22 +14,6 @@ import Locators.ProductCard;
 import Locators.RegisterForm;
 
 public class MyFirstTest extends TestBase {
-    @Test
-    public void myFirstTest() {
-        setWait(2);
-        driver.get("http://www.google.com/");
-        // кликнем по виртуальной клавиатуре
-        assert (isElementPresent(First.VIRTUAL_KEYBOARD));
-        driver.findElement(First.VIRTUAL_KEYBOARD).click();
-        // на клавиатуре кликнем на пробел
-        assert (isElementPresent(First.KEY_SPACE)) : "Not found space key on virtual keyboard"; // надо подождать пока появится :)
-        driver.findElement(First.KEY_SPACE).click();
-        // закроем виртуальную клавиатуру
-        driver.findElement(First.VIRTUAL_KEYBOARD).click();
-        driver.findElement(First.INPUT_FIELD).sendKeys("webdriver"); // StaleElementReferenceException
-        driver.findElement(First.BTN_OK).click();
-        assert expectTitlePage("webdriver - Поиск в Google") : "Incorrect page title ";
-    }
 
     @Test
     public void enterAdminPanelCheckHeaders() {
@@ -264,4 +249,11 @@ public class MyFirstTest extends TestBase {
         assert !isElementPresent(Home.USER_ACCOUNT_BOX) : "Logout customer FAIL!";
     }
 
+    @Test
+    public void addNewProductViaAdminPanel(){
+        AdminPanelLoginPage loginPage = new AdminPanelLoginPage(driver);
+        loginPage.open();
+        loginPage.login();
+        loginPage.logout();
+    }
 }
