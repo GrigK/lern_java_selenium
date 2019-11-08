@@ -33,73 +33,90 @@ public class Page {
         this.wait = new WebDriverWait(driver, waitSec);
     }
 
-    public boolean isElementPresent(By locator){
+    public boolean isElementPresent(By locator) {
         try {
             wait.until((WebDriver d) -> ExpectedConditions.visibilityOf(d.findElement(locator)));
             return true;
-        } catch (InvalidSelectorException e){
+        } catch (InvalidSelectorException e) {
             throw e;
-        } catch (TimeoutException e){
+        } catch (TimeoutException e) {
             return false;
         }
     }
 
-    public boolean isElementPresent(WebElement el, By locator){
+    public boolean isElementPresent(WebElement el, By locator) {
         try {
             wait.until((WebDriver d) -> ExpectedConditions.visibilityOf(el.findElement(locator)));
             return true;
-        } catch (InvalidSelectorException e){
+        } catch (InvalidSelectorException e) {
             throw e;
-        } catch (TimeoutException e){
+        } catch (TimeoutException e) {
             return false;
         }
     }
 
-    public boolean isElementDisappeared(By locator){
+    public boolean isElementDisappeared(By locator) {
         try {
             wait.until((WebDriver d) -> ExpectedConditions.invisibilityOf(d.findElement(locator)));
             return true;
-        } catch (InvalidSelectorException e){
+        } catch (InvalidSelectorException e) {
             throw e;
-        } catch (TimeoutException e){
+        } catch (TimeoutException e) {
             return false;
         }
     }
 
-    public boolean isElementDisappeared(WebElement el, By locator){
+    public boolean isElementDisappeared(WebElement el, By locator) {
         try {
             wait.until((WebDriver d) -> ExpectedConditions.invisibilityOf(el.findElement(locator)));
             return true;
-        } catch (InvalidSelectorException e){
+        } catch (InvalidSelectorException e) {
             throw e;
-        } catch (TimeoutException e){
+        } catch (TimeoutException e) {
             return false;
         }
     }
 
-    public boolean isElementPresentNoWait(By locator){
+    public boolean isElementPresentNoWait(By locator) {
         try {
             driver.findElement(locator);
             return true;
-        } catch (InvalidSelectorException e){
+        } catch (InvalidSelectorException e) {
             throw e;
-        } catch (NoSuchElementException e){
+        } catch (NoSuchElementException e) {
             return false;
         }
     }
 
-    public boolean areElementsPresent(By locator){
+    public boolean areElementsPresent(By locator) {
         return driver.findElements(locator).size() > 0;
     }
 
-    public void clickElement(By locator){
+    public void clickElement(By locator) {
         assert isElementPresent(locator) : locator.toString() + " not found on page " + driver.getCurrentUrl();
         driver.findElement(locator).click();
     }
 
-    public void sendStringElement(By locator, String str){
+    public void sendStringElement(By locator, String str) {
         assert isElementPresent(locator) : locator.toString() + " not found on page " + driver.getCurrentUrl();
         driver.findElement(locator).sendKeys(str);
+    }
+
+    public void setDatepicker(By selectorCalendar, String date) {
+        /**
+         * установить дату в jQuery календарике
+         * setDatepicker(By.id("#datepicker"), "02/20/2019")
+         */
+        try {
+            wait.until((WebDriver d) -> d.findElement(selectorCalendar).isDisplayed());
+            JavascriptExecutor js = (JavascriptExecutor) driver;
+            js.executeScript(
+                    String.format("$('{0}').datepicker('setDate', '{1}')", selectorCalendar.toString(), date));
+        } catch (TimeoutException e) {
+            assert false :
+                    selectorCalendar.toString() + " not found(timeout) on page " + driver.getCurrentUrl();
+
+        }
     }
 
 }

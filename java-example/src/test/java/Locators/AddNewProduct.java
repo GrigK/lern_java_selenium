@@ -23,7 +23,7 @@ public class AddNewProduct {
     public static final By INPUT_HEAD_TITLE_RU = By.cssSelector("input[name=head_title\\[ru\\]]");
 
     public static final By TAB_PRICES = By.cssSelector("td#content  div.tabs li:nth-child(4) a");
-    public static final By INPUT_PURCHASE = By.cssSelector("input[name=purchase_price]");
+    public static final By INPUT_PURCHASE_PRICE = By.cssSelector("input[name=purchase_price]");
     public static final By SELECT_PURCHASE_CORRENCY = By.cssSelector("select[name=purchase_price_currency_code]");
     public static final By INPUT_PRICE_USD = By.cssSelector("input[name=prices\\[USD\\]]");
     public static final By INPUT_PRICE_EUR = By.cssSelector("input[name=prices\\[EUR\\]]");
