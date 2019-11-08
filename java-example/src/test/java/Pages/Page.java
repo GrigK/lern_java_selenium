@@ -44,6 +44,19 @@ public class Page {
         }
     }
 
+    public boolean isElementPresent(WebElement element) {
+        try {
+            wait.until(ExpectedConditions.visibilityOf(element));
+            return true;
+        } catch (TimeoutException e) {
+            return false;
+        }
+    }
+
+    public boolean isElementNoPresent(By locator) {
+        return !isElementPresentNoWait(locator);
+    }
+
     public boolean isElementPresent(WebElement el, By locator) {
         try {
             wait.until((WebDriver d) -> ExpectedConditions.visibilityOf(el.findElement(locator)));
@@ -61,6 +74,15 @@ public class Page {
             return true;
         } catch (InvalidSelectorException e) {
             throw e;
+        } catch (TimeoutException e) {
+            return false;
+        }
+    }
+
+    public boolean isElementDisappeared(WebElement element) {
+        try {
+            wait.until(ExpectedConditions.stalenessOf(element));
+            return true;
         } catch (TimeoutException e) {
             return false;
         }
@@ -95,6 +117,10 @@ public class Page {
     public void clickElement(By locator) {
         assert isElementPresent(locator) : locator.toString() + " not found on page " + driver.getCurrentUrl();
         driver.findElement(locator).click();
+    }
+    public void clickElement(WebElement element) {
+        assert isElementPresent(element) : "WebElement not found on page " + driver.getCurrentUrl();
+        element.click();
     }
 
     public void sendStringElement(By locator, String str) {

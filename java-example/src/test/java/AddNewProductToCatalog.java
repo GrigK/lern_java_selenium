@@ -1,6 +1,3 @@
-import java.util.*;
-
-import Locators.AddNewProduct;
 import org.junit.Test;
 
 import Pages.AdminPanelLoginPage;

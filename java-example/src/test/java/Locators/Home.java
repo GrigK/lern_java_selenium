@@ -23,5 +23,6 @@ public class Home {
 
     public static final By USER_ACCOUNT_BOX = By.cssSelector("#box-account");
     public static final String USER_LOGOUT_URL = "http://litecart.local/ru/logout";
+    public static final By LINK_CART = By.cssSelector("div#cart");
 
 }
