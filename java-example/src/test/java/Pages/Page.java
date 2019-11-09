@@ -145,4 +145,12 @@ public class Page {
         }
     }
 
+    public Alert getAlert(){
+        try {
+            return wait.until(ExpectedConditions.alertIsPresent());
+        } catch (TimeoutException e) {
+            return null;
+        }
+    }
+
 }
