@@ -1,11 +1,11 @@
-import Locators.ProductCard;
 import Pages.CartPage;
 import Pages.HomePage;
 import Pages.ProductCardPage;
+
 import org.junit.Test;
+
 import org.openqa.selenium.WebElement;
 
-import java.util.*;
 
 public class AddProductToBasket extends TestBase {
     @Test
@@ -23,11 +23,9 @@ public class AddProductToBasket extends TestBase {
         HomePage homePage = new HomePage(driver);
         homePage.open();
         for(int i = 0; i < 3; i++){
-            List<WebElement> prods = homePage.getPopularProducts();
-            String urlProduct = homePage.getProductLink(prods.get(i));
-
-            homePage.clickElement(prods.get(i));
-            homePage.isElementDisappeared(prods.get(i));
+            WebElement product = homePage.getPopularProducts().get(i);
+            String urlProduct = homePage.getProductLink(product);
+            product.click();
 
             ProductCardPage productCardPage = new ProductCardPage(driver, urlProduct);
             productCardPage.selectAttribute(1);

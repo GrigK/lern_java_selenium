@@ -3,6 +3,7 @@ package Pages;
 import Locators.Cart;
 import org.openqa.selenium.WebDriver;
 import org.openqa.selenium.WebElement;
+import org.openqa.selenium.support.ui.ExpectedCondition;
 import org.openqa.selenium.support.ui.ExpectedConditions;
 
 public class CartPage extends Page {
@@ -11,16 +12,28 @@ public class CartPage extends Page {
     }
 
     public void emptyCart(){
-        setWait(5);
-        if(isElementPresent(Cart.TABLE_ORDER)){
+        if(areElementsPresent(Cart.TABLE_ORDER)){
+            setWait(5);
+            assert areElementsPresent(Cart.BTN_REMOVE) : " Not found BTN_REMOVE";
             int quantityProds = driver.findElements(Cart.BTN_REMOVE).size();
 
             for(int i = 0; i < quantityProds; i++){
-                WebElement tableOrder = driver.findElement(Cart.TABLE_ORDER);
-                String text = tableOrder.getText();
-                driver.findElements(Cart.BTN_REMOVE).get(0).click();
-                wait.until(ExpectedConditions.not(
-                        ExpectedConditions.textToBePresentInElement(tableOrder, text)));
+                WebElement btn = driver.findElements(Cart.BTN_REMOVE).get(0);
+                // клик д.б. по видимой кнопке
+                wait.until(ExpectedConditions.visibilityOf(btn));
+                btn.click();
+
+                // ждем когда изменится количество кнопок BTN_REMOVE
+                if(areElementsPresent(Cart.TABLE_ORDER)) {
+                    int finalI = i;
+                    wait.until(new ExpectedCondition<Boolean>() {
+                        public Boolean apply(WebDriver driver){
+                            int cnt = driver.findElements(Cart.BTN_REMOVE).size();
+                            return (quantityProds - finalI) - cnt == 1;
+                        }
+                    });
+
+                }
             }
         }
     }

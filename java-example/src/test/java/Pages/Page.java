@@ -3,6 +3,7 @@ package Pages;
 import org.openqa.selenium.*;
 import org.openqa.selenium.support.ui.ExpectedConditions;
 import org.openqa.selenium.support.ui.WebDriverWait;
+import org.openqa.selenium.StaleElementReferenceException;
 
 import java.util.NoSuchElementException;
 
@@ -33,6 +34,70 @@ public class Page {
         this.wait = new WebDriverWait(driver, waitSec);
     }
 
+    /* *** */
+    public boolean areElementsPresent(By locator) {
+        return driver.findElements(locator).size() > 0;
+    }
+
+    public void clickElement(By locator) {
+        assert isElementPresent(locator) : locator.toString() + " not found on page " + driver.getCurrentUrl();
+        driver.findElement(locator).click();
+    }
+
+    public void clickElement(WebElement element) {
+        assert isElementPresent(element) : "WebElement not found on page " + driver.getCurrentUrl();
+        element.click();
+    }
+
+    public boolean expectTitlePage(String title){
+        return wait.until(ExpectedConditions.titleIs(title));
+    }
+
+    public Alert getAlert(){
+        try {
+            return wait.until(ExpectedConditions.alertIsPresent());
+        } catch (TimeoutException e) {
+            return null;
+        }
+    }
+
+    public boolean isElementDisappeared(By locator) {
+        try {
+            wait.until((WebDriver d) -> ExpectedConditions.invisibilityOf(d.findElement(locator)));
+            return true;
+        } catch (InvalidSelectorException e) {
+            throw e;
+        } catch (TimeoutException e) {
+            return false;
+        }
+    }
+
+    public boolean isElementDisappeared(WebElement element) {
+        try {
+            wait.until(ExpectedConditions.stalenessOf(element));
+            return true;
+        }catch (StaleElementReferenceException e){
+            return true;
+        } catch (TimeoutException e) {
+            return false;
+        }
+    }
+
+    public boolean isElementDisappeared(WebElement el, By locator) {
+        try {
+            wait.until((WebDriver d) -> ExpectedConditions.invisibilityOf(el.findElement(locator)));
+            return true;
+        } catch (InvalidSelectorException e) {
+            throw e;
+        } catch (TimeoutException e) {
+            return false;
+        }
+    }
+
+    public boolean isElementNotPresent(By locator) {
+        return !isElementPresentNoWait(locator);
+    }
+
     public boolean isElementPresent(By locator) {
         try {
             wait.until((WebDriver d) -> ExpectedConditions.visibilityOf(d.findElement(locator)));
@@ -53,44 +118,20 @@ public class Page {
         }
     }
 
-    public boolean isElementNoPresent(By locator) {
-        return !isElementPresentNoWait(locator);
+    public boolean isElementNotPresent(WebElement element) {
+        try {
+            wait.until(ExpectedConditions.stalenessOf(element));
+            return true;
+        } catch (StaleElementReferenceException e){
+            return true;
+        } catch (TimeoutException e) {
+            return false;
+        }
     }
 
     public boolean isElementPresent(WebElement el, By locator) {
         try {
             wait.until((WebDriver d) -> ExpectedConditions.visibilityOf(el.findElement(locator)));
-            return true;
-        } catch (InvalidSelectorException e) {
-            throw e;
-        } catch (TimeoutException e) {
-            return false;
-        }
-    }
-
-    public boolean isElementDisappeared(By locator) {
-        try {
-            wait.until((WebDriver d) -> ExpectedConditions.invisibilityOf(d.findElement(locator)));
-            return true;
-        } catch (InvalidSelectorException e) {
-            throw e;
-        } catch (TimeoutException e) {
-            return false;
-        }
-    }
-
-    public boolean isElementDisappeared(WebElement element) {
-        try {
-            wait.until(ExpectedConditions.stalenessOf(element));
-            return true;
-        } catch (TimeoutException e) {
-            return false;
-        }
-    }
-
-    public boolean isElementDisappeared(WebElement el, By locator) {
-        try {
-            wait.until((WebDriver d) -> ExpectedConditions.invisibilityOf(el.findElement(locator)));
             return true;
         } catch (InvalidSelectorException e) {
             throw e;
@@ -110,25 +151,12 @@ public class Page {
         }
     }
 
-    public boolean areElementsPresent(By locator) {
-        return driver.findElements(locator).size() > 0;
-    }
-
-    public void clickElement(By locator) {
-        assert isElementPresent(locator) : locator.toString() + " not found on page " + driver.getCurrentUrl();
-        driver.findElement(locator).click();
-    }
-    public void clickElement(WebElement element) {
-        assert isElementPresent(element) : "WebElement not found on page " + driver.getCurrentUrl();
-        element.click();
-    }
-
     public void sendStringElement(By locator, String str) {
         assert isElementPresent(locator) : locator.toString() + " not found on page " + driver.getCurrentUrl();
         driver.findElement(locator).sendKeys(str);
     }
 
-    public void setDatepicker(By selectorCalendar, String date) {
+    public void setDatePicker(By selectorCalendar, String date) {
         /**
          * установить дату в jQuery календарике
          * setDatepicker(By.id("#datepicker"), "02/20/2019")
@@ -141,15 +169,7 @@ public class Page {
         } catch (TimeoutException e) {
             assert false :
                     selectorCalendar.toString() + " not found(timeout) on page " + driver.getCurrentUrl();
-
         }
     }
 
-    public Alert getAlert(){
-        try {
-            return wait.until(ExpectedConditions.alertIsPresent());
-        } catch (TimeoutException e) {
-            return null;
-        }
-    }
 }

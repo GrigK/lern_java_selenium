@@ -4,6 +4,7 @@ import Locators.Home;
 import org.openqa.selenium.By;
 import org.openqa.selenium.WebDriver;
 import org.openqa.selenium.WebElement;
+import org.openqa.selenium.support.ui.ExpectedConditions;
 
 import java.util.List;
 
@@ -15,8 +16,8 @@ public class HomePage extends Page {
 
     private List<WebElement> getProductsFromBox(By box){
         assert isElementPresent(box) : box.toString() + " products not found on Home page";
-        WebElement element = driver.findElement(box);
-        return element.findElements(Home.PRODUCT_IN_LIST);
+//        WebElement element = driver.findElement(box);
+        return driver.findElement(box).findElements(Home.PRODUCT_IN_LIST);
     }
 
     public List<WebElement> getPopularProducts(){
@@ -30,12 +31,15 @@ public class HomePage extends Page {
     }
 
     public String getProductLink(WebElement element){
-        assert isElementPresent(element, Home.PRODUCT_LINK) : "Not found productLink in this element";
         return element.findElement(Home.PRODUCT_LINK).getAttribute("href");
     }
 
-    public void clickToCart(){
+    public CartPage clickToCart(){
         assert isElementPresent(Home.LINK_CART) : "Not found link cart on home page";
+        String text = driver.findElement(By.cssSelector("title")).getText();
         clickElement(Home.LINK_CART);
+        wait.until(ExpectedConditions.textToBe(By.cssSelector("title"), text));
+
+        return new CartPage(driver);
     }
 }

@@ -23,27 +23,30 @@ public class TestBase {
     public WebDriverWait wait;
     private long waitSec = 10;
 
-    public static class EventListener extends AbstractWebDriverEventListener{
+    public static class EventListener extends AbstractWebDriverEventListener {
         /**
          * Слушатель для протоколирования тестов
-         * @param by
-         * @param element
-         * @param driver
          */
 
-        @Override
-        public void beforeFindBy(By by, WebElement element, WebDriver driver) {
-            System.out.println(by);
-        }
-
-        @Override
-        public void afterFindBy(By by, WebElement element, WebDriver driver) {
-            System.out.println(by + " found");
-        }
-
+//        @Override
+//        public void beforeFindBy(By by, WebElement element, WebDriver driver) {
+//            System.out.println(by);
+//        }
+//
+//        @Override
+//        public void afterFindBy(By by, WebElement element, WebDriver driver) {
+//            System.out.println(by + " found");
+//        }
         @Override
         public void onException(Throwable throwable, WebDriver driver) {
             System.out.println(throwable);
+            StackTraceElement[] stktrace = throwable.getStackTrace();
+            for (int i = 0; i < stktrace.length; i++) {
+                System.out.println("Index " + i
+                        + " of stack trace"
+                        + " array conatins = "
+                        + stktrace[i].toString());
+            }
 
             // снятие скриншота
             File tmp = ((TakesScreenshot) driver).getScreenshotAs(OutputType.FILE);
@@ -67,7 +70,7 @@ public class TestBase {
         }
 
         ChromeOptions ops = new ChromeOptions();
-        ops.setCapability("unexpetedAlertBehaviour", "dicmiss");
+        ops.setCapability("unexpectedAlertBehaviour", "dismiss");
         // добавим параметры командной строки для броузера
         // ops.addArguments("start-fullscreen");
 
@@ -93,7 +96,7 @@ public class TestBase {
         );
     }
 
-    public ExpectedCondition<String> anyWindowOtherThan(Set<String> oldWindows){
+    public ExpectedCondition<String> anyWindowOtherThan(Set<String> oldWindows) {
         /**
          * Возвращает handle нового окна, если оно открыто
          * пример искользования:
@@ -104,9 +107,9 @@ public class TestBase {
          * assert newWindow != null : "New window not open";
          * driver.switchTo().window(newWindow);
          */
-        return  new ExpectedCondition<String>() {
+        return new ExpectedCondition<String>() {
             @Override
-            public String apply( WebDriver driver) {
+            public String apply(WebDriver driver) {
                 Set<String> handles = driver.getWindowHandles();
                 handles.removeAll(oldWindows);
                 return handles.size() > 0 ? handles.iterator().next() : null;
@@ -126,49 +129,49 @@ public class TestBase {
         this.wait = new WebDriverWait(driver, waitSec);
     }
 
-    public boolean isElementPresent(By locator){
+    public boolean isElementPresent(By locator) {
         try {
             wait.until((WebDriver d) -> ExpectedConditions.visibilityOf(d.findElement(locator)));
 //            wait.until((WebDriver d) -> d.findElement(locator));
             return true;
-        } catch (InvalidSelectorException e){
+        } catch (InvalidSelectorException e) {
             throw e;
-        } catch (TimeoutException e){
+        } catch (TimeoutException e) {
             return false;
         }
     }
 
-    public boolean isElementPresent(WebElement el, By locator){
+    public boolean isElementPresent(WebElement el, By locator) {
         try {
             wait.until((WebDriver d) -> el.findElement(locator));
             return true;
-        } catch (InvalidSelectorException e){
+        } catch (InvalidSelectorException e) {
             throw e;
-        } catch (TimeoutException e){
+        } catch (TimeoutException e) {
             return false;
         }
     }
 
-    public boolean isElementPresentNoWait(By locator){
+    public boolean isElementPresentNoWait(By locator) {
         try {
             driver.findElement(locator);
             return true;
-        } catch (InvalidSelectorException e){
+        } catch (InvalidSelectorException e) {
             throw e;
-        } catch (NoSuchElementException e){
+        } catch (NoSuchElementException e) {
             return false;
         }
     }
 
-    public boolean areElementsPresent(By locator){
+    public boolean areElementsPresent(By locator) {
         return driver.findElements(locator).size() > 0;
     }
 
-    public boolean expectTitlePage(String title){
+    public boolean expectTitlePage(String title) {
         return wait.until(ExpectedConditions.titleIs(title));
     }
 
-    public List<LogEntry> getLogBrowser(){
+    public List<LogEntry> getLogBrowser() {
         return driver.manage().logs().get("browser").getAll();
     }
 

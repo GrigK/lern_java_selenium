@@ -1,8 +1,7 @@
 import Locators.First;
-import Pages.AdminPanelLoginPage;
 import org.junit.Test;
 
-public class SecondTest extends  TestBase {
+public class SecondTest extends TestBase {
     @Test
     public void myGoogleTest() {
         setWait(2);

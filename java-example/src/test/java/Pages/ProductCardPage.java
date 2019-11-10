@@ -11,27 +11,30 @@ public class ProductCardPage extends Page {
         super(driver, url);
     }
 
+    public ProductCardPage(WebDriver driver) {
+        super(driver, "http://litecart.local/admin/?category_id=0&app=catalog&doc=edit_product");
+    }
+
     public void selectAttribute(int sel){
-        setWait(1);
-        if(isElementPresent(ProductCard.SELECT_SIZE)) {
-            WebElement selectElement = driver.findElement(ProductCard.SELECT_SIZE);
-            Select selector = new Select(selectElement);
+        setWait(3);
+        if(areElementsPresent(ProductCard.SELECT_SIZE)) {
+            Select selector = new Select(driver.findElement(ProductCard.SELECT_SIZE));
             selector.selectByIndex(sel);
         }
     }
 
     public void setQuantity(int quantity){
-        assert isElementPresent(ProductCard.INPUT_QUANTITY) :
+        assert areElementsPresent(ProductCard.INPUT_QUANTITY) :
                 "Field 'Input quantity' not found " + driver.getCurrentUrl();
-        WebElement el = driver.findElement(ProductCard.INPUT_QUANTITY);
-        el.clear();
-        el.sendKeys(String.format("%d", quantity));
+        driver.findElement(ProductCard.INPUT_QUANTITY).clear();
+        driver.findElement(ProductCard.INPUT_QUANTITY).sendKeys(String.format("%d", quantity));
     }
 
     public void addToCart(){
         setWait(5);
-        assert isElementPresent(ProductCard.BTN_ADD_TO_CART) :
+        assert areElementsPresent(ProductCard.BTN_ADD_TO_CART) :
                 "Button add to cart not found on page " + driver.getCurrentUrl();
+        assert areElementsPresent(ProductCard.QUANTITY_IN_CART) : "QUANTITY_IN_CART not found";
         WebElement cartQ = driver.findElement(ProductCard.QUANTITY_IN_CART);
         String text = cartQ.getText();
         driver.findElement(ProductCard.BTN_ADD_TO_CART).click();
