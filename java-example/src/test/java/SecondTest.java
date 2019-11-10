@@ -19,13 +19,4 @@ public class SecondTest extends  TestBase {
         driver.findElement(First.BTN_OK).click();
         assert expectTitlePage("webdriver - Поиск в Google") : "Incorrect page title ";
     }
-
-    @Test
-    public void addNewProductViaAdminPanel(){
-        AdminPanelLoginPage loginPage = new AdminPanelLoginPage(driver);
-        loginPage.open();
-        loginPage.login();
-        loginPage.logout();
-    }
-
 }
