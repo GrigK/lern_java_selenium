@@ -1,24 +1,62 @@
-import org.checkerframework.checker.nullness.compatqual.NullableDecl;
-import org.junit.After;
+import com.google.common.io.Files;
 import org.junit.Before;
 import org.openqa.selenium.*;
 import org.openqa.selenium.chrome.ChromeDriver;
 import org.openqa.selenium.chrome.ChromeOptions;
-import org.openqa.selenium.remote.DesiredCapabilities;
-import org.openqa.selenium.remote.RemoteWebDriver;
+import org.openqa.selenium.logging.LogEntry;
+import org.openqa.selenium.support.events.AbstractWebDriverEventListener;
+import org.openqa.selenium.support.events.EventFiringWebDriver;
 import org.openqa.selenium.support.ui.ExpectedCondition;
 import org.openqa.selenium.support.ui.ExpectedConditions;
 import org.openqa.selenium.support.ui.WebDriverWait;
 
+import java.io.File;
+import java.io.IOException;
+import java.util.List;
 import java.util.NoSuchElementException;
 import java.util.Set;
-import java.util.concurrent.TimeUnit;
+
 
 public class TestBase {
-    public static ThreadLocal<WebDriver> tlDriver = new ThreadLocal<>();
-    public WebDriver driver;
-    public WebDriverWait wait; // для явных ожиданий
+    private static ThreadLocal<EventFiringWebDriver> tlDriver = new ThreadLocal<>();
+    public EventFiringWebDriver driver;
+    public WebDriverWait wait;
     private long waitSec = 10;
+
+    public static class EventListener extends AbstractWebDriverEventListener{
+        /**
+         * Слушатель для протоколирования тестов
+         * @param by
+         * @param element
+         * @param driver
+         */
+
+        @Override
+        public void beforeFindBy(By by, WebElement element, WebDriver driver) {
+            System.out.println(by);
+        }
+
+        @Override
+        public void afterFindBy(By by, WebElement element, WebDriver driver) {
+            System.out.println(by + " found");
+        }
+
+        @Override
+        public void onException(Throwable throwable, WebDriver driver) {
+            System.out.println(throwable);
+
+            // снятие скриншота
+            File tmp = ((TakesScreenshot) driver).getScreenshotAs(OutputType.FILE);
+            File screen = new File("screen_" + System.currentTimeMillis() + ".png");
+            try {
+                Files.copy(tmp, screen);
+            } catch (IOException e) {
+                e.printStackTrace();
+            }
+            System.out.println(screen);
+        }
+
+    }
 
     @Before
     public void start() {
@@ -33,7 +71,8 @@ public class TestBase {
         // добавим параметры командной строки для броузера
         // ops.addArguments("start-fullscreen");
 
-        driver = new ChromeDriver(ops);
+        driver = new EventFiringWebDriver(new ChromeDriver(ops));
+        driver.register(new EventListener());
         // driver= new FirefoxDriver();
         // driver = new RemoteWebDriver(DesiredCapabilities.chrome());
 
@@ -55,6 +94,16 @@ public class TestBase {
     }
 
     public ExpectedCondition<String> anyWindowOtherThan(Set<String> oldWindows){
+        /**
+         * Возвращает handle нового окна, если оно открыто
+         * пример искользования:
+         * String originalWindow = driver.getWindowHandle();
+         * Set<String> existingWindows = driver.getWindowHandles()
+         * el.click();
+         * String newWindow = wait.until(anyWindowOtherThan(existingWindows));
+         * assert newWindow != null : "New window not open";
+         * driver.switchTo().window(newWindow);
+         */
         return  new ExpectedCondition<String>() {
             @Override
             public String apply( WebDriver driver) {
@@ -117,6 +166,10 @@ public class TestBase {
 
     public boolean expectTitlePage(String title){
         return wait.until(ExpectedConditions.titleIs(title));
+    }
+
+    public List<LogEntry> getLogBrowser(){
+        return driver.manage().logs().get("browser").getAll();
     }
 
 }
