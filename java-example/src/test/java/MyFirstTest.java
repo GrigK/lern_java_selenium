@@ -7,48 +7,13 @@ import org.junit.Test;
 import org.openqa.selenium.WebElement;
 
 import Locators.First;
-import Locators.AdminLogin;
+//import Locators.AdminLogin;
 import Locators.Home;
-import Locators.AdminCountries;
+//import Locators.AdminCountries;
 import Locators.ProductCard;
 import Locators.RegisterForm;
 
 public class MyFirstTest extends TestBase {
-
-    @Test
-    public void enterAdminPanelCheckHeaders() {
-        /**
-         * 1) входит в панель администратора http://localhost/litecart/admin
-         * 2) прокликивает последовательно все пункты меню слева, включая вложенные пункты
-         * 3) для каждой страницы проверяет наличие заголовка
-         */
-        EnterToAdminSide();
-
-        List<WebElement> elems = driver.findElements(AdminLogin.LEFT_MENU_URLS);
-        List<String> urls = new ArrayList();
-        elems.forEach((WebElement el) -> { urls.add(el.getAttribute("href")); });
-
-        for (String page : urls) {
-            driver.get(page);
-            assert isElementPresent(AdminLogin.TITLE) : "Title not found";
-            assert !driver .getTitle().equals("") : "Title is empty " + page;
-        }
-        driver.findElement(AdminLogin.LOGOUT_ICON).click(); // выход
-    }
-
-    private void EnterToAdminSide(){
-        setWait(5);
-        String url = "http://litecart.local/admin/";
-        driver.get(url);
-        assert driver.findElements(AdminLogin.BOX_LOGIN).size() > 0 : "Wrong login page";
-        assert isElementPresent(AdminLogin.USERNAME) : "Input username field not found";
-        assert isElementPresent(AdminLogin.PASSWORD) : "Input password field not found";
-        assert isElementPresent(AdminLogin.BTN_LOGIN) : "Button login not found";
-        driver.findElement(AdminLogin.USERNAME).sendKeys("admin");
-        driver.findElement(AdminLogin.PASSWORD).sendKeys("ujuf0311");
-        driver.findElement(AdminLogin.BTN_LOGIN).click();
-        assert isElementPresent(AdminLogin.LOGO): "No logo found after login in admin page";
-    }
 
     @Test
     public void checkStickerOnProductsInHomePage() {
@@ -75,60 +40,6 @@ public class MyFirstTest extends TestBase {
         for (WebElement prod : prods) {
             assert prod.findElements(Home.STICKER).size() == 1 : "Sticker not one";
         }
-    }
-
-    @Test
-    public void checkSortingCountryAndGeofence() {
-        /**
-         * 1) на странице http://localhost/litecart/admin/?app=countries&doc=countries
-         * а) проверить, что страны расположены в алфавитном порядке
-         * б) для тех стран, у которых количество зон отлично от нуля -- открыть страницу этой страны и там проверить, что зоны расположены в алфавитном порядке
-         * 2) на странице http://localhost/litecart/admin/?app=geo_zones&doc=geo_zones
-         * зайти в каждую из стран и проверить, что зоны расположены в алфавитном порядке
-         */
-        String url = "http://litecart.local/admin/?app=countries&doc=countries";
-        EnterToAdminSide();
-        driver.get(url);
-
-        assert isElementPresent(AdminCountries.TABLE_ALL_COUNTRIES);
-        WebElement tableCounties = driver.findElement(AdminCountries.TABLE_ALL_COUNTRIES);
-        List<WebElement> rowsCountries = tableCounties.findElements(AdminCountries.TABLE_ROWS);
-
-        List<String> countriesList = new ArrayList();
-        List<String> subCountrieUrlsList = new ArrayList();
-
-        rowsCountries.forEach((WebElement x) -> {
-            countriesList.add(x.findElement(AdminCountries.COUNTRY_NAME).getText());
-            int zones = Integer.parseInt(x.findElement(AdminCountries.QUANTITY_SUBZONES).getText());
-            if(zones > 0){
-                subCountrieUrlsList.add(x.findElement(AdminCountries.SUBZONE_LINK).getAttribute("href"));}
-        });
-        assert checkSortingList(countriesList): "The error of sorting the list of countries";
-
-        for(String zoneUrl: subCountrieUrlsList){
-            driver.get(zoneUrl);
-            assert isElementPresent(AdminCountries.TABLE_SUBZONES): "Not found table subzones";
-            WebElement tableSubCounties = driver.findElement(AdminCountries.TABLE_SUBZONES);
-            List<WebElement> countrieRows = tableSubCounties.findElements(AdminCountries.TABLE_ROWS_SUBZONES);
-            countrieRows.remove(0); // remove header line
-            countrieRows.remove(countrieRows.size()-1); // remove add line
-
-            List<String> subCountrieNames = new ArrayList();
-            countrieRows.forEach((WebElement y) -> {
-                subCountrieNames.add(y.findElement(AdminCountries.COUNTRY_NAME_SUBZONE).getText());});
-            assert checkSortingList(subCountrieNames): "The error of sorting the list of subzones";
-        }
-        driver.findElement(AdminLogin.LOGOUT_ICON).click(); // выход
-    }
-
-    private boolean checkSortingList(List<String> arr){
-        /**
-         * Let's check that the list is sorted correctly
-         */
-        List<String> src = new ArrayList();
-        src.addAll(arr);
-        Collections.sort(src);
-        return src.equals(arr);
     }
 
     @Test
