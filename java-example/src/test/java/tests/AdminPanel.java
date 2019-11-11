@@ -57,7 +57,7 @@ public class AdminPanel extends TestBaseNew {
          * Не забудьте, что новое окно открывается не мгновенно, поэтому требуется ожидание открытия окна.
          */
         app.loginAdminPanel();
-        app.checkExtarnalLinks();
+        app.checkExternalLinks();
         app.logoutAdminPanel();
     }
 

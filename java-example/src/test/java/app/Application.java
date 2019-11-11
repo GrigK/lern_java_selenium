@@ -153,7 +153,7 @@ public class Application {
         return src.equals(arr);
     }
 
-    public void checkExtarnalLinks() {
+    public void checkExternalLinks() {
         adminCountriesPage.open();
         WebElement countryRow = adminCountriesPage.getAllRows().get(2);
         System.out.println("Edit country: " + adminCountriesPage.getCountryName(countryRow));
