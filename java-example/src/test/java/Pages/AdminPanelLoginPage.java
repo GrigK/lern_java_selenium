@@ -3,7 +3,6 @@ package Pages;
 import org.junit.Assert;
 import org.openqa.selenium.WebDriver;
 
-//import Locators.AdminLogin;
 import org.openqa.selenium.WebElement;
 import org.openqa.selenium.support.FindBy;
 import org.openqa.selenium.support.PageFactory;

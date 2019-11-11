@@ -44,7 +44,7 @@ public class Application {
     }
 
     /* *** */
-    public List<LogEntry> getLogBrowser(){
+    public List<LogEntry> getLogBrowser() {
         return driver.manage().logs().get("browser").getAll();
     }
 
@@ -70,12 +70,12 @@ public class Application {
     }
 
     /* ************* */
-    public List<WebElement> getPopularProducts(){
+    public List<WebElement> getPopularProducts() {
         homePage.open();
         return homePage.getPopularProducts();
     }
 
-    public void addProductToCart(WebElement product){
+    public void addProductToCart(WebElement product) {
         String urlProduct = homePage.getProductLink(product);
         product.click();
 
@@ -85,7 +85,7 @@ public class Application {
         productCardPage.addToCart();
     }
 
-    public void cleanCart(){
+    public void cleanCart() {
         homePage.clickToCart().emptyCart();
     }
 
@@ -103,7 +103,7 @@ public class Application {
         adminPanelLoginPage.logout();
     }
 
-    public void checkTitleOnLeftMenuPages(){
+    public void checkTitleOnLeftMenuPages() {
         /**
          * проверка на не пустой title страницы
          */
@@ -114,7 +114,7 @@ public class Application {
                 });
     }
 
-    public void checkSortingCountries(){
+    public void checkSortingCountries() {
         adminCountriesPage.open();
         List<WebElement> rowsCountries = adminCountriesPage.getAllRows();
 
@@ -123,22 +123,23 @@ public class Application {
 
         rowsCountries.forEach((WebElement row) -> {
             countriesList.add(adminCountriesPage.getCountryName(row));
-            if(adminCountriesPage.getQuantitySubzone(row) > 0){
+            if (adminCountriesPage.getQuantitySubzone(row) > 0) {
                 subCountrieUrlsList.add(adminCountriesPage.getSubzoneLink(row));
             }
         });
         Assert.assertTrue("The error of sorting the list of countries", checkSortingList(countriesList));
 
-        for(String zoneUrl: subCountrieUrlsList){
+        for (String zoneUrl : subCountrieUrlsList) {
             adminCountriesPage.setUrl(zoneUrl);
             adminCountriesPage.open();
 
-            List<WebElement> countrieRows =  adminCountriesPage.getSubzoneRows();
+            List<WebElement> countrieRows = adminCountriesPage.getSubzoneRows();
             List<String> subCountrieNames = new ArrayList();
 
             countrieRows.forEach((WebElement row) -> {
-                subCountrieNames.add(adminCountriesPage.getSubzoneName(row));});
-            assert checkSortingList(subCountrieNames): "The error of sorting the list of subzones " + zoneUrl;
+                subCountrieNames.add(adminCountriesPage.getSubzoneName(row));
+            });
+            assert checkSortingList(subCountrieNames) : "The error of sorting the list of subzones " + zoneUrl;
         }
     }
 
@@ -152,6 +153,30 @@ public class Application {
         return src.equals(arr);
     }
 
+    public void checkExtarnalLinks() {
+        adminCountriesPage.open();
+        WebElement countryRow = adminCountriesPage.getAllRows().get(2);
+        System.out.println("Edit country: " + adminCountriesPage.getCountryName(countryRow));
+
+        EditCountryPage editCountryPage = adminCountriesPage.editCountry(countryRow);
+        System.out.println("Original window -> " + driver.getTitle());
+        List<WebElement> extLinks = editCountryPage.getExternalLinks();
+
+        String originalWindow = driver.getWindowHandle();
+        Set<String> existingWindows = driver.getWindowHandles();
+
+        for (WebElement el : extLinks) {
+            el.click();
+
+            String newWindow = adminCountriesPage.wait.until(anyWindowOtherThan(existingWindows));
+            Assert.assertTrue("New window not open", newWindow != null);
+            driver.switchTo().window(newWindow);
+            System.out.println("New window:" + driver.getTitle());
+
+            driver.close();
+            driver.switchTo().window(originalWindow);
+        }
+    }
 
 
     /**
@@ -160,6 +185,7 @@ public class Application {
     public static class EventListener extends AbstractWebDriverEventListener {
         /**
          * Слушатель для протоколирования тестов
+         *
          * @param by
          * @param element
          * @param driver

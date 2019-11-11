@@ -9,7 +9,7 @@ import java.util.NoSuchElementException;
 
 public class Page {
     protected WebDriver driver;
-    protected WebDriverWait wait;
+    public WebDriverWait wait;
 
     protected String url;
     protected long waitSec = 5;

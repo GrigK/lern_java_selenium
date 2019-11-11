@@ -62,10 +62,10 @@ public class AdminCountriesPage extends Page {
         return row.findElement(COUNTRY_NAME_SUBZONE).getText();
     }
 
-    public EditCountryPage editCountry(WebElement elementCountry) {
-        String link = elementCountry.getAttribute("href");
-        elementCountry.click();
-        assert isElementDisappeared(elementCountry) : "Not open edit country: " + link;
+    public EditCountryPage editCountry(WebElement row) {
+        String link = row.findElement(SUBZONE_LINK).getAttribute("href");
+        row.findElement(SUBZONE_LINK).click();
+        assert isElementDisappeared(row) : "Not open edit country: " + link;
         return new EditCountryPage(driver, link);
     }
 }
