@@ -1,9 +1,8 @@
 package app;
 
-import Pages.CartPage;
-import Pages.HomePage;
-import Pages.ProductCardPage;
+import Pages.*;
 import com.google.common.io.Files;
+import org.junit.Assert;
 import org.openqa.selenium.*;
 import org.openqa.selenium.chrome.ChromeDriver;
 import org.openqa.selenium.chrome.ChromeOptions;
@@ -23,16 +22,21 @@ public class Application {
     private ProductCardPage productCardPage;
     private CartPage cartPage;
 
+    private AdminPanelLoginPage adminPanelLoginPage;
+    private AdminCountriesPage adminCountriesPage;
+
     public Application() {
         ChromeOptions ops = new ChromeOptions();
         ops.setCapability("unexpetedAlertBehaviour", "dismiss");
         driver = new EventFiringWebDriver(new ChromeDriver(ops));
         driver.register(new Application.EventListener());
 
-        // Объекты страниц
         homePage = new HomePage(driver);
         productCardPage = new ProductCardPage(driver);
         cartPage = new CartPage(driver);
+
+        adminPanelLoginPage = new AdminPanelLoginPage(driver);
+        adminCountriesPage = new AdminCountriesPage(driver);
     }
 
     public void quit() {
@@ -85,6 +89,74 @@ public class Application {
         homePage.clickToCart().emptyCart();
     }
 
+    public void loginAdminPanel() {
+        /**
+         * Вход в админ-панель
+         */
+        adminPanelLoginPage.open().login();
+    }
+
+    public void logoutAdminPanel() {
+        /**
+         * выход из админ панели
+         */
+        adminPanelLoginPage.logout();
+    }
+
+    public void checkTitleOnLeftMenuPages(){
+        /**
+         * проверка на не пустой title страницы
+         */
+        adminPanelLoginPage.getLeftMenuLinks().forEach(
+                (String url) -> {
+                    driver.get(url);
+                    Assert.assertFalse("Title on page is empty: " + url, driver.getTitle().equals(""));
+                });
+    }
+
+    public void checkSortingCountries(){
+        adminCountriesPage.open();
+        List<WebElement> rowsCountries = adminCountriesPage.getAllRows();
+
+        List<String> countriesList = new ArrayList();
+        List<String> subCountrieUrlsList = new ArrayList();
+
+        rowsCountries.forEach((WebElement row) -> {
+            countriesList.add(adminCountriesPage.getCountryName(row));
+            if(adminCountriesPage.getQuantitySubzone(row) > 0){
+                subCountrieUrlsList.add(adminCountriesPage.getSubzoneLink(row));
+            }
+        });
+        Assert.assertTrue("The error of sorting the list of countries", checkSortingList(countriesList));
+
+        for(String zoneUrl: subCountrieUrlsList){
+            adminCountriesPage.setUrl(zoneUrl);
+            adminCountriesPage.open();
+
+            List<WebElement> countrieRows =  adminCountriesPage.getSubzoneRows();
+            List<String> subCountrieNames = new ArrayList();
+
+            countrieRows.forEach((WebElement row) -> {
+                subCountrieNames.add(adminCountriesPage.getSubzoneName(row));});
+            assert checkSortingList(subCountrieNames): "The error of sorting the list of subzones " + zoneUrl;
+        }
+    }
+
+    private boolean checkSortingList(List<String> arr) {
+        /**
+         * Let's check that the list is sorted correctly
+         */
+        List<String> src = new ArrayList();
+        src.addAll(arr);
+        Collections.sort(src);
+        return src.equals(arr);
+    }
+
+
+
+    /**
+     * Class EventListener for logging selenium events
+     */
     public static class EventListener extends AbstractWebDriverEventListener {
         /**
          * Слушатель для протоколирования тестов

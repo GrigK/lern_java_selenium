@@ -1,17 +1,53 @@
 package Pages;
 
+import org.junit.Assert;
 import org.openqa.selenium.WebDriver;
 
-import Locators.AdminLogin;
+//import Locators.AdminLogin;
+import org.openqa.selenium.WebElement;
+import org.openqa.selenium.support.FindBy;
+import org.openqa.selenium.support.PageFactory;
+
+import java.util.ArrayList;
+import java.util.List;
 
 public class AdminPanelLoginPage extends Page {
     public AdminPanelLoginPage(WebDriver driver) {
         super(driver, "http://litecart.local/admin/");
+        PageFactory.initElements(driver, this);
+        //PageFactory.initElements(new AjaxElementLocatorFactory(driver, Constants.WebDriverWaitDuration), this);
     }
 
+    // elements this page
+    @FindBy(name="username")
+    public WebElement usernameInput;
+
+    @FindBy(name="password")
+    public WebElement passwordInput;
+
+    @FindBy(name="login")
+    public WebElement btnLogin;
+
+    @FindBy(css="ul#box-apps-menu")
+    public WebElement leftMenu;
+
+    @FindBy(css="ul#box-apps-menu a")
+    public List<WebElement> leftMenuUrls;
+
+    @FindBy(css=".logotype")
+    public WebElement logoImage;
+
+    @FindBy(id="box-login")
+    public List<WebElement> boxLogin;
+
+    @FindBy(css="div.header a:nth-child(5)")
+    public WebElement logoutIcon;
+
+
+    // ***
     @Override
     public AdminPanelLoginPage open() {
-        driver.get(url);
+        super.open();
         return this;
     }
 
@@ -29,30 +65,31 @@ public class AdminPanelLoginPage extends Page {
     }
 
     public AdminPanelLoginPage logout(){
-        assert  isElementPresent(AdminLogin.LOGOUT_ICON) : "Logout fail. Not found logout icon on admin side";
-        driver.findElement(AdminLogin.LOGOUT_ICON).click(); // выход
+        logoutIcon.click();
         return this;
     }
 
-    public boolean isOnThisPage() {
-        return driver.findElements(AdminLogin.BOX_LOGIN).size() > 0;
-    }
+    public boolean isOnThisPage() { return boxLogin.size() > 0;}
 
     public AdminPanelLoginPage enterUsername(String username) {
-        assert isElementPresent(AdminLogin.USERNAME) : "Input username field on login page not found";
-        driver.findElement(AdminLogin.USERNAME).sendKeys(username);
+        usernameInput.sendKeys(username);
         return this;
     }
 
     public AdminPanelLoginPage enterPassword(String password) {
-        assert isElementPresent(AdminLogin.PASSWORD) : "Input password field on login page not found";
-        driver.findElement(AdminLogin.PASSWORD).sendKeys(password);
+        passwordInput.sendKeys(password);
         return this;
     }
 
     public void submitLogin() {
-        assert isElementPresent(AdminLogin.BTN_LOGIN) : "Button 'login' on 'login page' not found";
-        driver.findElement(AdminLogin.BTN_LOGIN).click();
-        assert isElementPresent(AdminLogin.LEFT_MENU) : "Log in to admin panel fail";
+        btnLogin.click();
+        Assert.assertTrue("Login to admin panel failed", isElementPresent(leftMenu));
     }
+
+    public List<String> getLeftMenuLinks(){
+        List<String> urls = new ArrayList();
+        leftMenuUrls.forEach((WebElement el) -> { urls.add(el.getAttribute("href")); });
+        return urls;
+    }
+
 }

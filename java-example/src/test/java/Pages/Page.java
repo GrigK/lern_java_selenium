@@ -112,6 +112,7 @@ public class Page {
     public boolean isElementPresent(WebElement element) {
         try {
             wait.until(ExpectedConditions.visibilityOf(element));
+//             wait.until(ExpectedConditions.not(ExpectedConditions.stalenessOf(element)));
             return true;
         } catch (TimeoutException e) {
             return false;
@@ -146,6 +147,15 @@ public class Page {
             return true;
         } catch (InvalidSelectorException e) {
             throw e;
+        } catch (NoSuchElementException e) {
+            return false;
+        }
+    }
+
+    public boolean isElementPresentNoWait(WebElement element) {
+        try {
+            ExpectedConditions.not(ExpectedConditions.stalenessOf(element));
+            return true;
         } catch (NoSuchElementException e) {
             return false;
         }
