@@ -39,6 +39,17 @@ public class Page {
         return driver.findElements(locator).size() > 0;
     }
 
+    public boolean areElementsPresentWait(By locator) {
+        try {
+            wait.until((WebDriver d) -> d.findElements(locator).size() > 0);
+            return true;
+        } catch (InvalidSelectorException e) {
+            throw e;
+        } catch (TimeoutException e) {
+            return false;
+        }
+    }
+
     public void clickElement(By locator) {
         assert isElementPresent(locator) : locator.toString() + " not found on page " + driver.getCurrentUrl();
         driver.findElement(locator).click();
