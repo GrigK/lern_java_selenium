@@ -27,7 +27,7 @@ public class Application {
 
     public Application() {
         ChromeOptions ops = new ChromeOptions();
-        ops.setCapability("unexpetedAlertBehaviour", "dismiss");
+        ops.setCapability("unexpectedAlertBehaviour", "dismiss");
         driver = new EventFiringWebDriver(new ChromeDriver(ops));
         driver.register(new Application.EventListener());
 
