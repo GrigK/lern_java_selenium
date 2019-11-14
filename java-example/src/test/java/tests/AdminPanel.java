@@ -61,4 +61,21 @@ public class AdminPanel extends TestBaseNew {
         app.logoutAdminPanel();
     }
 
+    @Test
+    public void addNewProductViaAdminPanel(){
+        /**
+         * открыть меню Catalog, в правом верхнем углу нажать кнопку "Add New Product",
+         * заполнить поля с информацией о товаре и сохранить.
+         * Достаточно заполнить только информацию на вкладках
+         * General, Information и Prices.
+         * Скидки (Campains) на вкладке Prices можно не добавлять.
+         * После сохранения товара нужно убедиться, что он появился в каталоге (в админке).
+         * Клиентскую часть магазина можно не проверять.
+         */
+        app.loginAdminPanel();
+        app.openCatalogAndClickAddNewProduct();
+        app.editNewProduct();
+        app.logoutAdminPanel();
+
+    }
 }

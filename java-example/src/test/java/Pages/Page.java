@@ -173,7 +173,7 @@ public class Page {
     }
 
     public void sendStringElement(By locator, String str) {
-        assert isElementPresent(locator) : locator.toString() + " not found on page " + driver.getCurrentUrl();
+        assert areElementsPresent(locator) : locator.toString() + " not found on page " + driver.getCurrentUrl();
         driver.findElement(locator).sendKeys(str);
     }
 

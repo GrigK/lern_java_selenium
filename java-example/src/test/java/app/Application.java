@@ -178,6 +178,34 @@ public class Application {
         }
     }
 
+    public void  openCatalogAndClickAddNewProduct(){
+        AdminCatalogPage adminCatalogPage = new AdminCatalogPage(driver);
+        adminCatalogPage.open();
+        adminCatalogPage.submitAddNewProduct();
+    }
+
+    public void editNewProduct(){
+        AddNewProductPage addProduct = new AddNewProductPage(driver);
+        addProduct.openGeneralTab()
+                .setEnabled().setNameEn("New product").setNameRu("Новый продукт")
+                .setCategory(1).setGroup(0).setGroup(1)
+                .setQuantity(25.0)
+                .uploadImage("/home/grig/Изображения/Аватарки для проги/anonym.png")
+                .setDateFrom("08112019").setDateTo("08112020")
+
+                .openInformationTab()
+                .setManufacturer()
+                .setShortDescriptionEn("Short description product").setShortDescriptionRu("Короткое описание товара")
+                .setHeadTitleEn("New product head").setHeadTitleRu("Новый продукт head")
+
+                .openPricesTab()
+                .setPurchasePrice(9.99).selectPurchaseCurrencyCode()
+                .setPriceUSD(15.0).setPriceEUR(11.0).setPriceRUR(975.0)
+                .submitSave();
+
+        Assert.assertFalse("Error saving new product", addProduct.isErrorSave());
+    }
+
 
     /**
      * Class EventListener for logging selenium events
