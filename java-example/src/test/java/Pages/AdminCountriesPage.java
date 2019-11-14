@@ -1,8 +1,5 @@
 package Pages;
 
-//import Locators.AdminCountries;
-
-import org.junit.Assert;
 import org.openqa.selenium.By;
 import org.openqa.selenium.WebDriver;
 import org.openqa.selenium.WebElement;
@@ -37,6 +34,13 @@ public class AdminCountriesPage extends Page {
     public static final By COUNTRY_NAME_SUBZONE = By.cssSelector("td:nth-child(3)");
 
 
+    public EditCountryPage editCountry(WebElement row) {
+        String link = row.findElement(SUBZONE_LINK).getAttribute("href");
+        row.findElement(SUBZONE_LINK).click();
+        assert isElementDisappeared(row) : "Not open edit country: " + link;
+        return new EditCountryPage(driver, link);
+    }
+
     public List<WebElement> getAllRows() {
         return tableAllRows;
     }
@@ -60,12 +64,5 @@ public class AdminCountriesPage extends Page {
 
     public String getSubzoneName(WebElement row) {
         return row.findElement(COUNTRY_NAME_SUBZONE).getText();
-    }
-
-    public EditCountryPage editCountry(WebElement row) {
-        String link = row.findElement(SUBZONE_LINK).getAttribute("href");
-        row.findElement(SUBZONE_LINK).click();
-        assert isElementDisappeared(row) : "Not open edit country: " + link;
-        return new EditCountryPage(driver, link);
     }
 }
